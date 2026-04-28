@@ -1,0 +1,181 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor Teacher
+actor Student
+
+Teacher --> (Create Lesson)
+Teacher --> (Start Lesson)
+Teacher --> (Schedule / Reschedule)
+Student --> (Join Lesson)
+Student --> (View Recording)
+
+@enduml
+''
+' Enhanced use-case diagram based on uploaded mock:
+' - Added actors: Admin, Bank
+' - Added use-cases: Subscribe to Courses, Make Payments, Process Transaction,
+'   Apply Discount, Choose Slot, Attend Lessons, Report Problem, Check Availability,
+'   Send Notification, Authenticate User, Login, Reset Password, Create Account,
+'   Approval, Verify Email, Upload Recording, Upload PDFs & Videos, Replace/Delete File,
+'   Validate File, Set Schedule, Confirm Schedule, Update Schedule
+' - Included/extended relationships mirror the provided image. If any specific
+'   label, actor, or relation is missing from your intended diagram, tell me which
+'   and I'll incorporate it.
+'
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor Teacher
+actor Student
+actor Admin
+actor Bank
+
+package "E-Learning System" {
+	(Subscribe to Courses)
+	(Make Payments)
+	(Process Transaction)
+	(Apply Discount)
+	(Choose Slot)
+	(Attend Lessons)
+	(Report Problem)
+	(Reschedule Lesson)
+	(Check Availability)
+	(Send Notification)
+	(Authenticate User)
+	(Login)
+	(Reset Password)
+	(Create Account)
+	(Approval)
+	(Verify Email)
+	(Conduct Lesson)
+	(Upload Recording)
+	(Upload PDFs & Videos)
+	(Replace/Delete File)
+	(Validate File)
+	(Set Schedule)
+	(Confirm Schedule)
+	(Update Schedule)
+	(Join Lesson)
+	(View Recording)
+	(Make Payments) .> (Process Transaction) : <<include>>
+	(Subscribe to Courses) .> (Make Payments) : <<include>>
+	(Subscribe to Courses) .> (Choose Slot) : <<include>>
+	(Attend Lessons) .> (Report Problem) : <<extend>>
+	(Reschedule Lesson) .> (Check Availability) : <<include>>
+	(Check Availability) .> (Send Notification) : <<include>>
+	(Login) .> (Authenticate User) : <<include>>
+	(Login) .> (Reset Password) : <<extend>>
+	(Create Account) .> (Verify Email) : <<include>>
+	(Create Account) .> (Approval) : <<extend>>
+	(Conduct Lesson) .> (Upload Recording) : <<extend>>
+	(Upload PDFs & Videos) .> (Replace/Delete File) : <<extend>>
+	(Upload PDFs & Videos) .> (Validate File) : <<include>>
+	(Set Schedule) .> (Confirm Schedule) : <<include>>
+	(Set Schedule) .> (Update Schedule) : <<extend>>
+}
+
+''
+''' Reworked layout: distribute use-cases across three horizontal columns
+		(Student / Teacher / System) for readability. Increased spacing.
+'''
+
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam nodesep 80
+skinparam dpi 150
+skinparam usecasePadding 10
+
+actor Teacher
+actor Student
+actor Admin
+actor Bank
+
+package "E-Learning System" {
+	left to right direction
+
+	package "Student Flows" {
+		(Subscribe to Courses)
+		(Make Payments)
+		(Choose Slot)
+		(Attend Lessons)
+		(Report Problem)
+		(Reschedule Lesson)
+		(Join Lesson)
+		(View Recording)
+	}
+
+	package "Teacher Flows" {
+		(Create Lesson)
+		(Start Lesson)
+		(Conduct Lesson)
+		(Upload PDFs & Videos)
+		(Upload Recording)
+		(Set Schedule)
+	}
+
+	package "System / Admin" {
+		(Check Availability)
+		(Send Notification)
+		(Authenticate User)
+		(Login)
+		(Reset Password)
+		(Create Account)
+		(Verify Email)
+		(Approval)
+		(Replace/Delete File)
+		(Validate File)
+		(Confirm Schedule)
+		(Update Schedule)
+		(Process Transaction)
+		(Apply Discount)
+	}
+
+	' Relationships
+	(Subscribe to Courses) .> (Make Payments) : <<include>>
+	(Make Payments) .> (Process Transaction) : <<include>>
+	(Subscribe to Courses) .> (Choose Slot) : <<include>>
+	(Attend Lessons) .> (Report Problem) : <<extend>>
+	(Reschedule Lesson) .> (Check Availability) : <<include>>
+	(Check Availability) .> (Send Notification) : <<include>>
+	(Login) .> (Authenticate User) : <<include>>
+	(Login) .> (Reset Password) : <<extend>>
+	(Create Account) .> (Verify Email) : <<include>>
+	(Create Account) .> (Approval) : <<extend>>
+	(Conduct Lesson) .> (Upload Recording) : <<extend>>
+	(Upload PDFs & Videos) .> (Replace/Delete File) : <<extend>>
+	(Upload PDFs & Videos) .> (Validate File) : <<include>>
+	(Set Schedule) .> (Confirm Schedule) : <<include>>
+	(Set Schedule) .> (Update Schedule) : <<extend>>
+
+}
+
+' Actor associations
+Student --> (Subscribe to Courses)
+Student --> (Attend Lessons)
+Student --> (Reschedule Lesson)
+Student --> (Login)
+Student --> (Create Account)
+Student --> (Join Lesson)
+Student --> (View Recording)
+
+Teacher --> (Create Lesson)
+Teacher --> (Start Lesson)
+Teacher --> (Conduct Lesson)
+Teacher --> (Upload PDFs & Videos)
+Teacher --> (Set Schedule)
+Teacher --> (Upload Recording)
+
+Admin --> (Confirm Schedule)
+Admin --> (Approval)
+
+Bank --> (Process Transaction)
+
+note right of (Make Payments)
+	Bank processes transactions; 'Process Transaction' is external
+end note
+
+@enduml

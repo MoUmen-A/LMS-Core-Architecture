@@ -1,0 +1,55 @@
+@startuml
+title Conduct Lesson — Teacher View (Detailed)
+skinparam monochrome false
+skinparam shadowing true
+
+participant Teacher as T
+participant "LMS (App Server)" as LMS
+participant "Media Server" as MS
+participant Student as S
+participant "Recording Service" as RS
+
+T -> LMS: Create lesson(metadata)
+activate LMS
+LMS -> MS: Provision session(sessionId)
+activate MS
+MS --> LMS: Session ready(streamUrl)
+deactivate MS
+LMS --> T: Lesson created(sessionId, streamUrl)
+
+T -> LMS: Start lesson(sessionId)
+LMS -> MS: Start stream(sessionId)
+MS --> LMS: Streaming started
+LMS -> RS: Start recording(sessionId)
+activate RS
+
+loop students join
+	S -> LMS: Join(sessionId)
+	LMS --> S: Join confirmation + participant list
+end
+
+T -> LMS: Share materials(slideDeck)
+LMS -> S: Push slide update(page#)
+
+T -> S: Ask question(q1)
+S --> T: Answer(answer)
+
+alt poll
+	T -> LMS: Start poll(pollId)
+	LMS -> S: Show poll
+	S --> LMS: Submit vote
+	LMS --> T: Poll results
+end
+
+T -> LMS: End lesson(sessionId)
+LMS -> MS: Stop stream(sessionId)
+MS --> LMS: Stream stopped
+LMS -> RS: Stop recording(sessionId)
+RS --> LMS: Recording saved(url)
+deactivate RS
+LMS --> T: Lesson ended, recording available
+deactivate LMS
+
+note over LMS,RS: Recording retained for on-demand viewing
+
+@enduml
