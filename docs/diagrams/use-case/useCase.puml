@@ -1,181 +1,99 @@
 @startuml
+' --- Scaling and Layout ---
 left to right direction
 skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam actorStyle awesome
 
-actor Teacher
-actor Student
+' --- Primary Actors ---
+actor Student as S
+actor Teacher as T
 
-Teacher --> (Create Lesson)
-Teacher --> (Start Lesson)
-Teacher --> (Schedule / Reschedule)
-Student --> (Join Lesson)
-Student --> (View Recording)
+rectangle "E-Learning System" {
 
-@enduml
-''
-' Enhanced use-case diagram based on uploaded mock:
-' - Added actors: Admin, Bank
-' - Added use-cases: Subscribe to Courses, Make Payments, Process Transaction,
-'   Apply Discount, Choose Slot, Attend Lessons, Report Problem, Check Availability,
-'   Send Notification, Authenticate User, Login, Reset Password, Create Account,
-'   Approval, Verify Email, Upload Recording, Upload PDFs & Videos, Replace/Delete File,
-'   Validate File, Set Schedule, Confirm Schedule, Update Schedule
-' - Included/extended relationships mirror the provided image. If any specific
-'   label, actor, or relation is missing from your intended diagram, tell me which
-'   and I'll incorporate it.
-'
-@startuml
-left to right direction
-skinparam packageStyle rectangle
-
-actor Teacher
-actor Student
-actor Admin
-actor Bank
-
-package "E-Learning System" {
-	(Subscribe to Courses)
-	(Make Payments)
-	(Process Transaction)
-	(Apply Discount)
-	(Choose Slot)
-	(Attend Lessons)
-	(Report Problem)
-	(Reschedule Lesson)
-	(Check Availability)
-	(Send Notification)
-	(Authenticate User)
-	(Login)
-	(Reset Password)
-	(Create Account)
-	(Approval)
-	(Verify Email)
-	(Conduct Lesson)
-	(Upload Recording)
-	(Upload PDFs & Videos)
-	(Replace/Delete File)
-	(Validate File)
-	(Set Schedule)
-	(Confirm Schedule)
-	(Update Schedule)
-	(Join Lesson)
-	(View Recording)
-	(Make Payments) .> (Process Transaction) : <<include>>
-	(Subscribe to Courses) .> (Make Payments) : <<include>>
-	(Subscribe to Courses) .> (Choose Slot) : <<include>>
-	(Attend Lessons) .> (Report Problem) : <<extend>>
-	(Reschedule Lesson) .> (Check Availability) : <<include>>
-	(Check Availability) .> (Send Notification) : <<include>>
-	(Login) .> (Authenticate User) : <<include>>
-	(Login) .> (Reset Password) : <<extend>>
-	(Create Account) .> (Verify Email) : <<include>>
-	(Create Account) .> (Approval) : <<extend>>
-	(Conduct Lesson) .> (Upload Recording) : <<extend>>
-	(Upload PDFs & Videos) .> (Replace/Delete File) : <<extend>>
-	(Upload PDFs & Videos) .> (Validate File) : <<include>>
-	(Set Schedule) .> (Confirm Schedule) : <<include>>
-	(Set Schedule) .> (Update Schedule) : <<extend>>
+    ' Payment and Subscription
+    usecase "Subscribe to Courses" as UC_Sub
+    usecase "Choose Slot" as UC_Slot
+    usecase "Make Payments" as UC_Pay
+    usecase "Process Transaction" as UC_Proc
+    usecase "Apply Discount" as UC_Disc
+    
+    ' Lessons and Problems
+    usecase "Attend Lessons" as UC_Attend
+    usecase "Report Problem" as UC_Prob
+    usecase "Conduct Lesson" as UC_Conduct
+    usecase "Upload Recording" as UC_Rec
+    
+    ' Authentication
+    usecase "Login" as UC_Log
+    usecase "Authenticate User" as UC_Auth
+    usecase "Reset Password" as UC_Reset
+    usecase "Create Account" as UC_Create
+    usecase "Verify Email" as UC_Verify
+    usecase "Approval" as UC_Approve
+    
+    ' Scheduling
+    usecase "Reschedule Lesson" as UC_Resched
+    usecase "Check Availability" as UC_Check
+    usecase "Send Notification" as UC_Note
+    usecase "Set Schedule" as UC_SetSch
+    usecase "Update Schedule" as UC_UpdtSch
+    usecase "Confirm Schedule" as UC_ConfSch
+    
+    ' Files
+    usecase "Upload PDFs & Videos" as UC_Upload
+    usecase "Validate File" as UC_Valid
+    usecase "Replace/Delete File" as UC_Rep
 }
 
-''
-''' Reworked layout: distribute use-cases across three horizontal columns
-		(Student / Teacher / System) for readability. Increased spacing.
-'''
+' --- Secondary Actors ---
+actor Bank as B
+actor Admin as A
 
-@startuml
-left to right direction
-skinparam packageStyle rectangle
-skinparam nodesep 80
-skinparam dpi 150
-skinparam usecasePadding 10
+' --- Connections ---
 
-actor Teacher
-actor Student
-actor Admin
-actor Bank
+' Student
+S -- UC_Sub
+S -- UC_Attend
+S -- UC_Resched
+S -- UC_Log
+S -- UC_Create
 
-package "E-Learning System" {
-	left to right direction
+' Teacher
+T -- UC_Resched
+T -- UC_Log
+T -- UC_Create
+T -- UC_Conduct
+T -- UC_Upload
+T -- UC_SetSch
 
-	package "Student Flows" {
-		(Subscribe to Courses)
-		(Make Payments)
-		(Choose Slot)
-		(Attend Lessons)
-		(Report Problem)
-		(Reschedule Lesson)
-		(Join Lesson)
-		(View Recording)
-	}
+' Logic Relationships
+UC_Sub ..> UC_Pay : <<include>>
+UC_Sub ..> UC_Slot : <<include>>
+UC_Pay ..> UC_Proc : <<include>>
+UC_Pay <.. UC_Disc : <<extend>>
+UC_Proc -- B
 
-	package "Teacher Flows" {
-		(Create Lesson)
-		(Start Lesson)
-		(Conduct Lesson)
-		(Upload PDFs & Videos)
-		(Upload Recording)
-		(Set Schedule)
-	}
+UC_Attend <.. UC_Prob : <<extend>>
 
-	package "System / Admin" {
-		(Check Availability)
-		(Send Notification)
-		(Authenticate User)
-		(Login)
-		(Reset Password)
-		(Create Account)
-		(Verify Email)
-		(Approval)
-		(Replace/Delete File)
-		(Validate File)
-		(Confirm Schedule)
-		(Update Schedule)
-		(Process Transaction)
-		(Apply Discount)
-	}
+UC_Resched ..> UC_Check : <<include>>
+UC_Check ..> UC_Note : <<include>>
 
-	' Relationships
-	(Subscribe to Courses) .> (Make Payments) : <<include>>
-	(Make Payments) .> (Process Transaction) : <<include>>
-	(Subscribe to Courses) .> (Choose Slot) : <<include>>
-	(Attend Lessons) .> (Report Problem) : <<extend>>
-	(Reschedule Lesson) .> (Check Availability) : <<include>>
-	(Check Availability) .> (Send Notification) : <<include>>
-	(Login) .> (Authenticate User) : <<include>>
-	(Login) .> (Reset Password) : <<extend>>
-	(Create Account) .> (Verify Email) : <<include>>
-	(Create Account) .> (Approval) : <<extend>>
-	(Conduct Lesson) .> (Upload Recording) : <<extend>>
-	(Upload PDFs & Videos) .> (Replace/Delete File) : <<extend>>
-	(Upload PDFs & Videos) .> (Validate File) : <<include>>
-	(Set Schedule) .> (Confirm Schedule) : <<include>>
-	(Set Schedule) .> (Update Schedule) : <<extend>>
+UC_Log ..> UC_Auth : <<include>>
+UC_Log <.. UC_Reset : <<extend>>
 
-}
+UC_Create ..> UC_Verify : <<include>>
+UC_Create <.. UC_Approve : <<extend>>
+UC_Approve -- A
 
-' Actor associations
-Student --> (Subscribe to Courses)
-Student --> (Attend Lessons)
-Student --> (Reschedule Lesson)
-Student --> (Login)
-Student --> (Create Account)
-Student --> (Join Lesson)
-Student --> (View Recording)
+UC_Conduct <.. UC_Rec : <<extend>>
 
-Teacher --> (Create Lesson)
-Teacher --> (Start Lesson)
-Teacher --> (Conduct Lesson)
-Teacher --> (Upload PDFs & Videos)
-Teacher --> (Set Schedule)
-Teacher --> (Upload Recording)
+UC_Upload ..> UC_Valid : <<include>>
+UC_Upload <.. UC_Rep : <<extend>>
 
-Admin --> (Confirm Schedule)
-Admin --> (Approval)
-
-Bank --> (Process Transaction)
-
-note right of (Make Payments)
-	Bank processes transactions; 'Process Transaction' is external
-end note
+UC_SetSch ..> UC_ConfSch : <<include>>
+UC_SetSch <.. UC_UpdtSch : <<extend>>
+UC_UpdtSch ..> UC_ConfSch : <<include>>
 
 @enduml
+

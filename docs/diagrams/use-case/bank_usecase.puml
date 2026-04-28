@@ -1,0 +1,17 @@
+
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam actorStyle awesome
+
+actor Bank as B
+
+rectangle "Bank / Payment Gateway" {
+  usecase "Process Transaction" as UC_Proc
+}
+
+B -- UC_Proc
+
+@enduml
+

@@ -1,0 +1,40 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam actorStyle awesome
+
+actor Student as S
+
+rectangle "Student Use-Cases" {
+  usecase "Create Account" as UC_Create
+  usecase "Login" as UC_Log
+  usecase "Subscribe to Courses" as UC_Sub
+  usecase "Choose Slot" as UC_Slot
+  usecase "Make Payments" as UC_Pay
+  usecase "Attend Lessons" as UC_Attend
+  usecase "Join Lesson" as UC_Join
+  usecase "View Recording" as UC_View
+  usecase "Reschedule Lesson" as UC_Resched
+  usecase "Report Problem" as UC_Prob
+  usecase "Verify Email" as UC_Verify
+  usecase "Authenticate User" as UC_Auth
+  usecase "Reset Password" as UC_Reset
+}
+
+S -- UC_Create
+S -- UC_Log
+S -- UC_Sub
+S -- UC_Attend
+S -- UC_Join
+S -- UC_View
+S -- UC_Resched
+
+UC_Create ..> UC_Verify : <<include>>
+UC_Log ..> UC_Auth : <<include>>
+UC_Log <.. UC_Reset : <<extend>>
+UC_Sub ..> UC_Pay : <<include>>
+UC_Sub ..> UC_Slot : <<include>>
+UC_Attend <.. UC_Prob : <<extend>>
+
+@enduml
