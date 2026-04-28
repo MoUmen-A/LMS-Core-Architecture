@@ -1,0 +1,97 @@
+@startuml System_UseCase
+title EduFlow LMS — System Use Case Diagram
+
+left to right direction
+skinparam usecase {
+    BackgroundColor #FEFECE
+    BorderColor #A80036
+    ActorBorderColor #A80036
+    ArrowColor #A80036
+}
+
+' ──────────────────────────────
+'  Actors
+' ──────────────────────────────
+actor Student   as S
+actor Teacher   as T
+actor Admin     as A
+actor System    as Sys
+
+' ──────────────────────────────
+'  Student use-cases
+' ──────────────────────────────
+rectangle "EduFlow LMS" {
+
+    package "Account Management" {
+        usecase "Create Account"      as UC_CreateAcct
+        usecase "Require Approval"    as UC_Approval
+        usecase "Login"               as UC_Login
+        usecase "Reset Password"      as UC_ResetPwd
+    }
+
+    package "Learning" {
+        usecase "Enroll in Course"    as UC_Enroll
+        usecase "View Materials"      as UC_ViewMat
+        usecase "Submit Assignment"   as UC_Submit
+        usecase "Take Exam"           as UC_Exam
+        usecase "View Grades"         as UC_Grades
+    }
+
+    package "Teaching" {
+        usecase "Set Schedule"        as UC_SetSched
+        usecase "Update Schedule"     as UC_UpdSched
+        usecase "Conduct Lesson"      as UC_Lesson
+        usecase "Upload Materials"    as UC_Upload
+        usecase "Grade Assignments"   as UC_Grade
+    }
+
+    package "Administration" {
+        usecase "Manage Users"        as UC_ManageUsers
+        usecase "Generate Reports"    as UC_Reports
+        usecase "Send Notification"   as UC_Notify
+    }
+}
+
+' ──────────────────────────────
+'  Relationships — Account
+'  Arrow: (Create Account) --> <<extend>> (Require Approval)
+'  The approval step is an optional extension triggered when
+'  institutional / restricted account types are registered.
+' ──────────────────────────────
+S --> UC_CreateAcct
+UC_CreateAcct ..> UC_Approval  : <<extend>>
+S --> UC_Login
+S --> UC_ResetPwd
+
+' ──────────────────────────────
+'  Relationships — Learning
+' ──────────────────────────────
+S --> UC_Enroll
+S --> UC_ViewMat
+S --> UC_Submit
+S --> UC_Exam
+S --> UC_Grades
+
+' ──────────────────────────────
+'  Relationships — Teaching
+'  "Update Schedule" <<extend>> "Set Schedule":
+'  After initially setting a schedule the teacher may
+'  optionally return to update it — a classic extend scenario.
+' ──────────────────────────────
+T --> UC_SetSched
+UC_UpdSched ..> UC_SetSched  : <<extend>>
+T --> UC_UpdSched
+T --> UC_Lesson
+T --> UC_Upload
+T --> UC_Grade
+
+' ──────────────────────────────
+'  Relationships — Administration
+' ──────────────────────────────
+A --> UC_ManageUsers
+A --> UC_Reports
+Sys --> UC_Notify
+
+UC_Approval ..> UC_Notify : <<include>>
+
+@enduml

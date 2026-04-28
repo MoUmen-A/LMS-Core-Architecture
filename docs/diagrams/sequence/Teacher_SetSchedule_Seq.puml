@@ -1,0 +1,53 @@
+@startuml Teacher_SetSchedule_Seq
+title EduFlow LMS — Teacher: Set / Update Schedule Sequence
+
+skinparam sequenceArrowThickness 2
+skinparam sequenceParticipant underline
+skinparam backgroundColor #FFFFFF
+
+actor       Teacher        as T
+participant "EduFlow UI"   as UI
+participant "Schedule Service" as SS
+participant "Database"     as DB
+participant "Notification Service" as NS
+actor       Student        as S
+
+== Set New Schedule ==
+
+T -> UI      : Open Schedule Manager
+UI -> SS     : GET /schedules?teacherId={id}
+SS -> DB     : SELECT existing schedules
+DB --> SS    : schedules[]
+SS --> UI    : Return schedules
+UI --> T     : Display Schedule Dashboard
+
+T -> UI      : Fill in schedule details\n(title, date, time, course)
+UI -> SS     : POST /schedules { details }
+SS -> DB     : INSERT schedule record
+DB --> SS    : schedule_id
+SS --> UI    : 201 Created { schedule_id }
+UI --> T     : Confirm — "Schedule Created"
+
+SS -> NS     : Trigger student notifications
+NS -> S      : Email / Push: "New lesson scheduled"
+
+== Update Existing Schedule ==
+
+T -> UI      : Select existing schedule
+UI -> SS     : GET /schedules/{schedule_id}
+SS -> DB     : SELECT schedule by ID
+DB --> SS    : schedule record
+SS --> UI    : Return schedule details
+UI --> T     : Display editable form
+
+T -> UI      : Modify fields & submit
+UI -> SS     : PUT /schedules/{schedule_id} { updated }
+SS -> DB     : UPDATE schedule record
+DB --> SS    : OK
+SS --> UI    : 200 OK
+UI --> T     : Confirm — "Schedule Updated"
+
+SS -> NS     : Trigger update notifications
+NS -> S      : Email / Push: "Schedule has been updated"
+
+@enduml

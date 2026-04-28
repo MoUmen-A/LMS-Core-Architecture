@@ -1,0 +1,26 @@
+# OS-specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.iml
+
+# JetBrains IDEs
+*.iws
+out/
+
+# PlantUML generated images (stored in /assets when committed intentionally)
+*.png
+*.svg
+*.eps
+
+# Temporary files
+*.tmp
+*.bak
+*.log

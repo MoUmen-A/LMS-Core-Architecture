@@ -1,0 +1,61 @@
+@startuml Teacher_ConductLesson_Seq
+title EduFlow LMS — Teacher: Conduct Lesson Sequence
+
+skinparam sequenceArrowThickness 2
+skinparam sequenceParticipant underline
+skinparam backgroundColor #FFFFFF
+
+actor       Teacher        as T
+participant "EduFlow UI"   as UI
+participant "Lesson Service" as LS
+participant "Session Manager" as SM
+participant "Recording Service" as RS
+participant "Database"     as DB
+actor       Student        as S
+
+== Pre-Lesson ==
+
+T -> UI  : Open upcoming lesson
+UI -> LS : GET /lessons/{lesson_id}
+LS -> DB : SELECT lesson details
+DB --> LS : lesson record
+LS --> UI : Return lesson details
+UI --> T  : Show lesson info & "Start" button
+
+T -> UI  : Click "Start Lesson"
+UI -> SM : POST /sessions/start { lesson_id }
+SM -> DB : CREATE session record
+DB --> SM : session_id
+SM --> UI : Session URL generated
+UI --> T  : Classroom opens
+UI --> S  : Notify "Lesson is Live" (push)
+
+== Lesson In Progress ==
+
+T -> UI  : Share screen / upload slides
+UI -> LS : PATCH /lessons/{lesson_id}/materials
+LS -> DB : UPDATE materials list
+DB --> LS : OK
+LS --> UI : Materials visible to students
+
+UI -> RS : START recording { session_id }
+RS -> DB : LOG recording_start
+
+T -> UI  : Chat & Q&A with students
+S -> UI  : Send questions
+
+== End Lesson ==
+
+T -> UI  : Click "End Lesson"
+UI -> SM : POST /sessions/end { session_id }
+SM -> DB : UPDATE session status = ENDED
+SM -> RS : STOP recording
+RS -> DB : LOG recording_end, save file path
+RS --> SM : recording_url
+SM --> UI : Session closed
+UI --> T  : "Lesson Ended" confirmation
+
+SM -> DB  : Persist session summary
+UI --> S  : Notify "Recording available" (push)
+
+@enduml
