@@ -1,0 +1,65 @@
+@startuml Teacher_UploadMaterials_Seq
+title EduFlow LMS — Teacher: Upload Materials Sequence
+
+skinparam sequenceArrowThickness 2
+skinparam sequenceParticipant underline
+skinparam backgroundColor #FFFFFF
+
+actor       Teacher          as T
+participant "EduFlow UI"     as UI
+participant "Material Service" as MS
+participant "File Storage"   as FS
+participant "Database"       as DB
+participant "Notification Service" as NS
+actor       Student          as S
+
+== Upload New Material ==
+
+T -> UI : Navigate to Course > Materials
+UI -> MS : GET /courses/{course_id}/materials
+MS -> DB : SELECT materials for course
+DB --> MS : materials[]
+MS --> UI : Return list
+UI --> T  : Display materials panel
+
+T -> UI : Click "Upload" & select file(s)
+UI -> FS : POST /upload { file, metadata }
+FS -> FS : Validate file type & size
+alt File valid
+    FS -> FS : Store file, generate URL
+    FS --> UI : { file_url, file_id }
+    UI -> MS : POST /materials { course_id, file_id,\n title, description, visibility }
+    MS -> DB : INSERT material record
+    DB --> MS : material_id
+    MS --> UI : 201 Created { material_id }
+    UI --> T  : "Material uploaded successfully"
+    MS -> NS  : Notify enrolled students
+    NS -> S   : Push / Email: "New material available"
+else File invalid
+    FS --> UI : 400 Bad Request (type/size error)
+    UI --> T  : Show error message
+end
+
+== Update Existing Material ==
+
+T -> UI : Select material > "Edit"
+T -> UI : Modify title / description / replace file
+UI -> MS : PUT /materials/{material_id} { changes }
+MS -> DB : UPDATE material record
+DB --> MS : OK
+MS --> UI : 200 OK
+UI --> T  : "Material updated"
+
+== Delete Material ==
+
+T -> UI  : Select material > "Delete"
+UI --> T : Confirmation dialog
+T -> UI  : Confirm deletion
+UI -> MS : DELETE /materials/{material_id}
+MS -> DB : DELETE material record
+MS -> FS : DELETE stored file
+DB --> MS : OK
+MS --> UI : 204 No Content
+UI --> T  : "Material removed"
+
+@enduml

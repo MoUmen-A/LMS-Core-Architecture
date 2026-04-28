@@ -1,0 +1,64 @@
+@startuml Teacher_Master_Swimlane
+title EduFlow LMS — Teacher Master Activity Swimlane
+
+skinparam backgroundColor #FFFFFF
+skinparam activity {
+    BackgroundColor #DDEEFF
+    BorderColor #336699
+    ArrowColor #336699
+    StartColor #336699
+    EndColor #336699
+}
+skinparam swimlane {
+    BorderColor #336699
+    TitleFontColor #336699
+}
+
+|Teacher|
+start
+:Login to EduFlow;
+
+fork
+    |Teacher|
+    :Set Schedule;
+    :Schedule Created;
+    if (Need to modify?) then (yes)
+        :Update Schedule;
+    else (no)
+    endif
+
+fork again
+    |Teacher|
+    :Upload Materials;
+    :Assign to Course;
+
+fork again
+    |Teacher|
+    :Conduct Lesson;
+    fork
+        |Teacher|
+        :Share Screen / Slides;
+    fork again
+        |System|
+        :Record Session;
+        :Send Notifications to Students;
+    end fork
+
+    |Teacher|
+    :End Lesson;
+
+fork again
+    |Teacher|
+    :Grade Assignments;
+
+    |System|
+    :Update Gradebook;
+    :Notify Student of Grade;
+
+end fork
+
+|Teacher|
+:Logout;
+stop
+
+@enduml
