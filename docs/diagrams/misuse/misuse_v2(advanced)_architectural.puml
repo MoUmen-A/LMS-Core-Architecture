@@ -1,0 +1,63 @@
+@startuml
+title EduFlow Misuse Case Diagram - Architectural Best Practice Version
+
+left to right direction
+skinparam packageStyle rectangle
+
+' Actors
+actor User as "Legitimate User"
+actor Admin as "Security Administrator"
+actor Bank as "Payment Gateway"
+actor Attacker <<Threat Actor>> #Red
+
+rectangle "EduFlow Security Perimeter" {
+    ' Core Functional Use Cases
+    usecase "Access Account" as UC_Access
+    usecase "Execute Transaction" as UC_Transact
+    usecase "Resource Management" as UC_Resource
+    usecase "Real-time Interaction" as UC_Live
+    
+    ' Misuse Cases (Threats)
+    usecase "<color:white>Brute Force / Credential Stuffing</color>" as MC_Brute #Black
+    usecase "<color:white>DDoS Attack</color>" as MC_DDoS #Black
+    usecase "<color:white>Session Hijacking</color>" as MC_Hijack #Black
+    usecase "<color:white>SQL Injection</color>" as MC_SQLi #Black
+    usecase "<color:white>Ransomware / Data Deletion</color>" as MC_Ransom #Black
+
+    ' Mitigation Use Cases (Countermeasures)
+    usecase "Multi-Factor Authentication (MFA)" as Mit_MFA
+    usecase "Adaptive Rate Limiting & WAF" as Mit_WAF
+    usecase "TLS 1.3 Encryption & Secure Cookies" as Mit_TLS
+    usecase "Input Parameterized Queries" as Mit_SecureCode
+    usecase "Off-site Immutable Backups" as Mit_Backup
+    usecase "Intrusion Detection System (IDS)" as Mit_IDS
+}
+
+' Relationships
+User -- UC_Access
+User -- UC_Transact
+Bank -- UC_Transact
+Admin -- Mit_IDS
+
+Attacker -- MC_Brute
+Attacker -- MC_DDoS
+Attacker -- MC_Hijack
+Attacker -- MC_SQLi
+Attacker -- MC_Ransom
+
+' Threat Impact
+MC_Brute ..> UC_Access : <<threatens>>
+MC_Hijack ..> UC_Access : <<threatens>>
+MC_DDoS ..> UC_Live : <<threatens>>
+MC_SQLi ..> UC_Resource : <<threatens>>
+MC_Ransom ..> UC_Resource : <<threatens>>
+
+' Mitigation Strategy
+Mit_MFA ..> MC_Brute : <<mitigates>>
+Mit_TLS ..> MC_Hijack : <<mitigates>>
+Mit_WAF ..> MC_DDoS : <<mitigates>>
+Mit_SecureCode ..> MC_SQLi : <<mitigates>>
+Mit_Backup ..> MC_Ransom : <<mitigates>>
+Mit_IDS ..> MC_DDoS : <<detects>>
+
+@enduml

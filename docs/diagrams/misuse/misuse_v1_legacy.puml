@@ -1,0 +1,110 @@
+@startuml
+title EduFlow Misuse Case Diagram - Legacy Version (Visual Match)
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor Student
+actor Teacher
+actor Admin
+actor Bank
+actor Attacker <<Misuse>>
+
+rectangle "E-Learning System" {
+    ' Regular Use Cases
+    usecase "Subscribe to courses" as UC_Sub
+    usecase "make payments" as UC_Pay
+    usecase "Process transaction" as UC_Proc
+    usecase "choose slot" as UC_Slot
+    usecase "Attend lessons" as UC_Attend
+    usecase "Report Problem" as UC_Report
+    usecase "login" as UC_Login
+    usecase "Authenticate User" as UC_Auth
+    usecase "Reset Password" as UC_Reset
+    usecase "Create Account" as UC_Create
+    usecase "Verfiy" as UC_Verify
+    usecase "Reschedule Lesson" as UC_Resched
+    usecase "Check Availability" as UC_Check
+    usecase "Set Schedule" as UC_SetSched
+    usecase "confirm Schedule" as UC_ConfSched
+    usecase "Update schedule" as UC_UpdSched
+    usecase "Send Notification" as UC_Notify
+    usecase "Initiate Lesson" as UC_Init
+    usecase "Upload Recording" as UC_Rec
+    usecase "Upload PDFs & Videos" as UC_Upload
+    usecase "Validate File" as UC_Val
+    usecase "Replace/Delete File" as UC_Del
+
+    ' Misuse Cases (Black circles)
+    usecase "<color:white>identity theft</color>" as MC_IDTheft #black
+    usecase "<color:white>Flooding</color>" as MC_Flood #black
+    usecase "<color:white>Man in the middle</color>" as MC_MITM #black
+    usecase "<color:white>Corrupt database</color>" as MC_Corrupt #black
+
+    ' Mitigation Use Cases
+    usecase "multifactor authentication" as Mit_MFA
+    usecase "monitor system performance" as Mit_Monitor
+    usecase "rating limitation" as Mit_Rate
+    usecase "encryption" as Mit_Encrypt
+    usecase "back up data" as Mit_Backup
+}
+
+' Student interactions
+Student -- UC_Sub
+Student -- UC_Attend
+Student -- UC_Login
+Student -- UC_Create
+Student -- UC_Resched
+
+' Teacher interactions
+Teacher -- UC_SetSched
+Teacher -- UC_Init
+Teacher -- UC_Upload
+Teacher -- UC_Resched
+
+' Admin interactions
+Admin -- UC_Verify
+Admin -- UC_Auth
+Admin -- Mit_Monitor
+Admin -- UC_Notify
+
+' Bank interactions
+Bank -- UC_Proc
+
+' Attacker interactions
+Attacker -- MC_IDTheft
+Attacker -- MC_Flood
+Attacker -- MC_MITM
+Attacker -- MC_Corrupt
+
+' Internal Relationships
+UC_Sub ..> UC_Pay : <<include>>
+UC_Sub ..> UC_Slot : <<include>>
+UC_Pay ..> UC_Proc : <<include>>
+UC_Pay <.. UC_Apply : <<extend>>
+UC_Attend <.. UC_Report : <<extend>>
+UC_Login ..> UC_Auth : <<include>>
+UC_Login <.. UC_Reset : <<extend>>
+UC_Create ..> UC_Verify : <<include>>
+UC_Resched ..> UC_Check : <<include>>
+UC_SetSched ..> UC_ConfSched : <<include>>
+UC_UpdSched ..> UC_ConfSched : <<include>>
+UC_SetSched <.. UC_UpdSched : <<extend>>
+UC_Init ..> UC_Rec : <<include>>
+UC_Upload ..> UC_Val : <<include>>
+UC_Upload <.. UC_Del : <<extend>>
+UC_ConfSched <.. UC_Notify : <<extend>>
+
+' Threat/Mitigation Relationships
+MC_IDTheft ..> UC_Login : <<threatens>>
+MC_Flood ..> UC_Create : <<threatens>>
+MC_MITM ..> UC_Notify : <<threatens>>
+MC_Corrupt ..> UC_UpdSched : <<threatens>>
+
+Mit_MFA ..> MC_IDTheft : <<mitigates>>
+Mit_Monitor ..> MC_Flood : <<mitigates>>
+Mit_Rate ..> MC_Flood : <<mitigates>>
+Mit_Encrypt ..> MC_MITM : <<mitigates>>
+Mit_Backup ..> MC_Corrupt : <<mitigates>>
+
+@enduml
