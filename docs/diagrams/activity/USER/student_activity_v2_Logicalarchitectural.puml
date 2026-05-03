@@ -1,0 +1,107 @@
+@startuml
+title Student Flows - Architectural Best Practice Version
+
+|Student (Client)|
+|LMS Core (Server)|
+|External (Bank/Auth)|
+
+' --- REGISTER FLOW ---
+partition "User Registration" {
+    |Student (Client)|
+    start
+    :Submit Registration Form;
+    |LMS Core (Server)|
+    :Validate Input Data;
+    if (Data Valid?) then (YES)
+        |External (Bank/Auth)|
+        :Generate & Send OTP;
+        |Student (Client)|
+        repeat
+            :Enter OTP;
+            |LMS Core (Server)|
+            :Verify OTP;
+        backward:Invalid OTP;
+        repeat while (OTP Correct?) is (NO) not (YES)
+        :Create User Account;
+        :Notify Success;
+    else (NO)
+        |Student (Client)|
+        :Show Validation Errors;
+        detach
+    endif
+    stop
+}
+
+' --- LOGIN FLOW ---
+partition "User Login" {
+    |Student (Client)|
+    start
+    :Submit Credentials;
+    |LMS Core (Server)|
+    :Authenticate User;
+    if (Success?) then (YES)
+        :Generate Session Token (JWT);
+        :Update Last Login Timestamp;
+        |Student (Client)|
+        :Redirect to Dashboard;
+    else (NO)
+        |Student (Client)|
+        :Show Error Message;
+    endif
+    stop
+}
+
+' --- FORGET PASSWORD FLOW ---
+partition "Password Recovery" {
+    |Student (Client)|
+    start
+    :Request Password Reset;
+    |LMS Core (Server)|
+    :Check Account Existence;
+    if (User Exists?) then (YES)
+        |External (Bank/Auth)|
+        :Send Reset Link/Code;
+        |Student (Client)|
+        :Submit New Password;
+        |LMS Core (Server)|
+        :Update Password Hash;
+        :Revoke Active Sessions;
+    else (NO)
+        |Student (Client)|
+        :Show Generic Message;
+    endif
+    stop
+}
+
+' --- SUBSCRIBE FLOW ---
+partition "Course Subscription" {
+    |Student (Client)|
+    start
+    :Browse Course Details;
+    if (Interested?) then (YES)
+        :Select Time Slot;
+        :Click "Proceed to Payment";
+        |LMS Core (Server)|
+        :Lock Time Slot (Temporary);
+        :Initialize Transaction;
+        |External (Bank/Auth)|
+        :Process Financial Transaction;
+        if (Payment Successful?) then (YES)
+            |LMS Core (Server)|
+            :Confirm Enrollment;
+            :Update Student Subscriptions;
+            |Student (Client)|
+            :Show Success Page;
+        else (NO)
+            |LMS Core (Server)|
+            :Release Time Slot;
+            |Student (Client)|
+            :Show Payment Error;
+        endif
+    else (NO)
+        :Add to Favorites;
+    endif
+    stop
+}
+
+@enduml

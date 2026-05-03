@@ -1,0 +1,73 @@
+@startuml
+title Student Flows - Legacy Version (Visual Match)
+
+' --- REGISTER FLOW ---
+partition "Register" {
+    start
+    :Register;
+    repeat
+        :Enter Information;
+    backward:NO;
+    repeat while (Valid?) is (YES)
+    :Choose Verification method;
+    :Send Verification code;
+    if (Correct?) then (YES)
+        :Account Created;
+    else (NO)
+        :Wrong code;
+    endif
+    stop
+}
+
+' --- LOGIN FLOW ---
+partition "Login" {
+    start
+    repeat
+        :Enter Information;
+    backward:NO;
+    repeat while (Valid?) is (YES)
+    :Send Login Notification;
+    :Login Successfully;
+    stop
+}
+
+' --- FORGET PASSWORD FLOW ---
+partition "Forget Password" {
+    start
+    :Forget password;
+    :Enter Email or phone number;
+    if (Exist?) then (NO)
+        :Account doesn't exist;
+        stop
+    else (YES)
+        :Send Verification Code;
+        repeat
+            :Enter Code;
+        backward:NO;
+        repeat while (Correct Code?) is (YES)
+        :Change Password;
+        :Password Changed;
+    endif
+    stop
+}
+
+' --- SUBSCRIBE FLOW ---
+partition "Subscribe" {
+    start
+    :Subscribe;
+    if (Verification Result?) then (Account Created)
+        :Show Course Details;
+    else (Wrong code)
+        :Show Course Details;
+    endif
+    
+    split
+        :Put In Favorites;
+    split again
+        :Select The Course;
+        :Pay;
+    end split
+    stop
+}
+
+@enduml
