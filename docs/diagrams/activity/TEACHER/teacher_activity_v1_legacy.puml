@@ -1,0 +1,46 @@
+@startuml
+title Teacher Flows - Legacy Version (Visual Match)
+
+' --- UPLOAD MATERIAL FLOW ---
+partition "Upload Material" {
+    start
+    :Select Pdf/video file;
+    :Validate File size & format;
+    if (Is Valid?) then (YES)
+        :Store file & link to Course;
+        :Display "Upload Complete";
+    else (NO)
+        :Display "Invalid File error";
+    endif
+    stop
+}
+
+' --- RESCHEDULE FLOW ---
+partition "Reschedule" {
+    start
+    :Input Availability Slot;
+    if (is conflict?) then (YES)
+        :show error message;
+    else (NO)
+        :Store New Schedule;
+    endif
+    stop
+}
+
+' --- CONDUCT LESSON FLOW ---
+partition "Conduct Lesson" {
+    start
+    :Select "Start session";
+    :Verify Schedule & Auth;
+    :Fetch Lesson Permission;
+    if (is Authorized?) then (YES)
+        :Initialize Virtual Classroom;
+        :Log Session into Database;
+        :Provide live session access;
+    else (NO)
+        :Display "Access Denied";
+    endif
+    stop
+}
+
+@enduml

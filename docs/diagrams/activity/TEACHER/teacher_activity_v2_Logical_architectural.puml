@@ -1,0 +1,79 @@
+@startuml
+title Teacher Flows - Architectural Best Practice Version
+
+|Teacher (Dashboard)|
+|LMS Core (API Server)|
+|External (Storage/Media)|
+
+' --- UPLOAD MATERIAL FLOW ---
+partition "Material Upload & Management" {
+    |Teacher (Dashboard)|
+    start
+    :Select File (PDF/MP4);
+    :Check local file constraints;
+    |LMS Core (API Server)|
+    :Request Upload Signature;
+    |External (Storage/Media)|
+    :Upload File to Cloud Storage (S3);
+    :Return File URL;
+    |LMS Core (API Server)|
+    :Validate File Integrity & Format;
+    if (File Valid?) then (YES)
+        :Link Material to Course;
+        :Update Material Metadata;
+        |Teacher (Dashboard)|
+        :Show "Upload Successful";
+    else (NO)
+        |External (Storage/Media)|
+        :Purge Invalid File;
+        |Teacher (Dashboard)|
+        :Show "Validation Error";
+    endif
+    stop
+}
+
+' --- RESCHEDULE FLOW ---
+partition "Schedule Management" {
+    |Teacher (Dashboard)|
+    start
+    :Input New Availability Slot;
+    |LMS Core (API Server)|
+    :Search for Booking Conflicts;
+    if (Conflict Exists?) then (YES)
+        |Teacher (Dashboard)|
+        :Show Conflict Warning;
+        :Suggest Alternative Slots;
+    else (NO)
+        |LMS Core (API Server)|
+        :Atomic Update of Schedule;
+        :Notify Affected Students;
+        |Teacher (Dashboard)|
+        :Update Calendar View;
+    endif
+    stop
+}
+
+' --- CONDUCT LESSON FLOW ---
+partition "Live Lesson Execution" {
+    |Teacher (Dashboard)|
+    start
+    :Click "Start Live Session";
+    |LMS Core (API Server)|
+    :Authorize Session Request;
+    if (Is Authorized?) then (YES)
+        |External (Media/Video)|
+        :Provision WebRTC Room;
+        :Initialize Recording Service;
+        |LMS Core (API Server)|
+        :Log Session Start Time;
+        :Broadcast "Lesson Started" Event;
+        |Teacher (Dashboard)|
+        :Redirect to Virtual Classroom;
+    else (NO)
+        |Teacher (Dashboard)|
+        :Show "Access Denied" Error;
+    endif
+    stop
+}
+
+@enduml
