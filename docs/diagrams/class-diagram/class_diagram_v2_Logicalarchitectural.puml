@@ -1,0 +1,95 @@
+@startuml
+title EduFlow Class Diagram - Architectural Best Practice Version
+
+' --- Enums for Type Safety ---
+enum UserRole {
+    STUDENT
+    TEACHER
+    ADMIN
+}
+
+enum TransactionStatus {
+    PENDING
+    SUCCESS
+    FAILED
+    REFUNDED
+}
+
+' --- Core Classes ---
+abstract class User {
+    # id: UUID
+    # name: String
+    # email: String
+    # passwordHash: String
+    # role: UserRole
+    + authenticate(): boolean
+    + resetPassword(): void
+}
+
+class Student {
+    - enrolledCourses: List<Course>
+    + browseCatalog(): List<Course>
+    + bookSlot(lesson: Lesson): Subscription
+    + makePayment(amount: Decimal): Transaction
+}
+
+class Teacher {
+    - specialization: String
+    - isApproved: boolean
+    + manageSchedule(): void
+    + uploadMaterial(data: Material): void
+    + startLesson(id: UUID): Session
+}
+
+class Admin {
+    + approveTeacher(id: UUID): void
+    + resolveDispute(id: UUID): void
+}
+
+class Course {
+    - id: UUID
+    - title: String
+    - price: Decimal
+    - teacher: Teacher
+    + getSchedule(): List<Lesson>
+}
+
+class Lesson {
+    - id: UUID
+    - startTime: DateTime
+    - duration: int
+    - capacity: int
+    + isFull(): boolean
+}
+
+class Transaction {
+    - id: UUID
+    - amount: Decimal
+    - status: TransactionStatus
+    - timestamp: DateTime
+    + execute(): boolean
+}
+
+class Material {
+    - id: UUID
+    - type: String
+    - s3Url: String
+    + validate(): boolean
+}
+
+' --- Relationships ---
+User <|-- Student
+User <|-- Teacher
+User <|-- Admin
+
+Teacher "1" -- "*" Course : "creates"
+Course "1" *-- "*" Lesson : "contains"
+Student "*" -- "*" Course : "enrolls in"
+Student "1" -- "*" Transaction : "performs"
+Transaction "0..1" -- "1" Coupon : "applies"
+Teacher "1" -- "*" Material : "manages"
+
+' Note: Use composition for Lesson as it shouldn't exist without a Course
+' Use aggregation or association for Enrollments
+
+@enduml

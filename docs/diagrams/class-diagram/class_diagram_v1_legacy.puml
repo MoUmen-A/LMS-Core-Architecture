@@ -1,0 +1,87 @@
+@startuml
+title EduFlow Class Diagram - Legacy Version (Visual Match)
+
+abstract class User {
+    - userId: int
+    - name: String
+    - email: String
+    - password: String
+    - phoneNumber: String
+    + login(userId: String, password: String): boolean
+    + resetPasswordE(email: String): void
+    + resetPasswordP(phoneNumber: String): void
+}
+
+class Student {
+    + browseCourses(): List<Course>
+    + chooseSlot(lessonID: int): void
+    + pay(amount: double): boolean
+    + rescheduleLesson(oldLessonID: int, newLessonID: int): boolean
+}
+
+class Teacher {
+    - specialization: String
+    - bio: String
+    + setSchedule(schedule: List<DateTime>): boolean
+    + updateSchedule(lessonID: int, newTime: DateTime): boolean
+    + uploadDocument(file: File): void
+    + conductLesson(lessonID: int): void
+}
+
+class Admin {
+    + reviewRegistration(userID: int): void
+    + updateStatus(userID: int, newStatus: Enum): void
+}
+
+class Course {
+    - courseID: int
+    - title: String
+    - description: String
+    - price: double
+    + retrieveCoursesList(): List<Course>
+    + getCourseDetails(id: int): Course
+}
+
+class Lesson {
+    - lessonID: int
+    - startTime: DateTime
+    - endTime: DateTime
+    - isAvailable: boolean
+    + checkAvailability(time: DateTime): boolean
+}
+
+class Payment {
+    - transactionID: int
+    - amount: double
+    + recordTransaction(): void
+    + processPayment(): boolean
+}
+
+class Coupon {
+    - couponCode: String
+    - discountValue: double
+    + verifyCoupon(couponCode: String): double
+}
+
+class Document {
+    - fileID: int
+    - fileName: String
+    + updateDocument(id: int, newFile: Document): void
+    + deleteDocument(id: int): void
+    + verifyDocument(file: Document): boolean
+}
+
+' Relationships
+User <|-- Student
+User <|-- Teacher
+User <|-- Admin
+
+Course *-- Lesson : "1..*"
+Teacher -- Course : "1"
+Teacher -- Document : "*"
+Student -- Course : "*"
+Student -- Lesson : "*"
+Payment -- Student : "1"
+Payment ..> Coupon : "0..1"
+
+@enduml
