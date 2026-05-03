@@ -1,0 +1,79 @@
+@startuml
+title EduFlow Use Case Diagram - Legacy Version (Visual Match)
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor Student
+actor Teacher
+actor Admin
+actor Bank
+
+rectangle "E-Learning System" {
+    ' Use Cases
+    usecase "Subscribe to courses" as UC_Sub
+    usecase "make payments" as UC_Pay
+    usecase "Process transaction" as UC_Proc
+    usecase "choose slot" as UC_Slot
+    usecase "Apply Discount" as UC_Disc
+    usecase "Attend lessons" as UC_Attend
+    usecase "Report Problem" as UC_Report
+    usecase "login" as UC_Login
+    usecase "Authenticate User" as UC_Auth
+    usecase "Reset Password" as UC_Reset
+    usecase "Create Account" as UC_Create
+    usecase "Verfiy" as UC_Verify
+    usecase "Reschedule Lesson" as UC_Resched
+    usecase "Check Availability" as UC_Check
+    usecase "Send Notification" as UC_Note
+    usecase "Set Schedule" as UC_SetSched
+    usecase "confirm Schedule" as UC_ConfSched
+    usecase "Update schedule" as UC_UpdtSched
+    usecase "Initiate Lesson" as UC_Init
+    usecase "Upload Recording" as UC_Rec
+    usecase "Upload PDFs & Videos" as UC_Upload
+    usecase "Validate File" as UC_Val
+    usecase "Replace/Delete File" as UC_Del
+    usecase "monitor system performance" as UC_Monitor
+    usecase "provide technical support" as UC_Support
+}
+
+' Interactions
+Student -- UC_Sub
+Student -- UC_Attend
+Student -- UC_Login
+Student -- UC_Create
+Student -- UC_Resched
+
+Teacher -- UC_SetSched
+Teacher -- UC_Init
+Teacher -- UC_Upload
+Teacher -- UC_Resched
+
+Bank -- UC_Proc
+
+Admin -- UC_Verify
+Admin -- UC_Auth
+Admin -- UC_Monitor
+Admin -- UC_Support
+Admin -- UC_Note
+
+' Relationships
+UC_Sub ..> UC_Pay : <<include>>
+UC_Sub ..> UC_Slot : <<include>>
+UC_Pay ..> UC_Proc : <<include>>
+UC_Pay <.. UC_Disc : <<extend>>
+UC_Attend <.. UC_Report : <<extend>>
+UC_Login ..> UC_Auth : <<include>>
+UC_Login <.. UC_Reset : <<extend>>
+UC_Create ..> UC_Verify : <<include>>
+UC_Resched ..> UC_Check : <<include>>
+UC_Check ..> UC_Note : <<include>>
+UC_SetSched ..> UC_ConfSched : <<include>>
+UC_UpdtSched ..> UC_ConfSched : <<include>>
+UC_SetSched <.. UC_UpdtSched : <<extend>>
+UC_Init ..> UC_Rec : <<include>>
+UC_Upload ..> UC_Val : <<include>>
+UC_Upload <.. UC_Del : <<extend>>
+
+@enduml

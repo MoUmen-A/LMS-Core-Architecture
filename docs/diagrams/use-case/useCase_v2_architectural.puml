@@ -1,0 +1,75 @@
+@startuml
+title EduFlow Use Case Diagram - Architectural Best Practice Version
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam actorStyle awesome
+
+' Primary Actors
+actor "Authenticated User" as User
+actor Student
+actor Teacher
+actor Admin
+actor Bank
+
+' Generalization
+Student -up-|> User
+Teacher -up-|> User
+Admin -up-|> User
+
+rectangle "EduFlow Platform" {
+    
+    rectangle "Authentication & Identity" #aliceblue {
+        usecase "Manage Account" as UC_Manage
+        usecase "Secure Login" as UC_Login
+        usecase "MFA Verification" as UC_MFA
+        usecase "Reset Credentials" as UC_Reset
+    }
+
+    rectangle "Billing & Enrollment" #ivory {
+        usecase "Enroll in Course" as UC_Enroll
+        usecase "Process Secure Payment" as UC_Pay
+        usecase "Apply Promotional Coupon" as UC_Coupon
+    }
+
+    rectangle "Virtual Classroom & Teaching" #honeydew {
+        usecase "Conduct Live Lesson" as UC_Conduct
+        usecase "Stream & Record Session" as UC_Stream
+        usecase "Manage Course Materials" as UC_Materials
+        usecase "Interaction (Chat/Poll)" as UC_Interact
+    }
+
+    rectangle "System Administration" #lavender {
+        usecase "Approve Instructors" as UC_Approve
+        usecase "System Health Monitoring" as UC_Health
+        usecase "Technical Support Tier 2" as UC_Support
+    }
+}
+
+' Connections
+User -- UC_Login
+User -- UC_Reset
+User -- UC_Manage
+
+Student -- UC_Enroll
+Student -- UC_Interact
+
+Teacher -- UC_Conduct
+Teacher -- UC_Materials
+
+Admin -- UC_Approve
+Admin -- UC_Health
+Admin -- UC_Support
+
+' External Connections
+UC_Pay -- Bank
+
+' Internal Dependencies
+UC_Login ..> UC_MFA : <<include>>
+UC_Enroll ..> UC_Pay : <<include>>
+UC_Pay <.. UC_Coupon : <<extend>>
+UC_Conduct ..> UC_Stream : <<include>>
+UC_Conduct <.. UC_Interact : <<extend>>
+
+@enduml
