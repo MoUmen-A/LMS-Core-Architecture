@@ -1,0 +1,20 @@
+
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam actorStyle awesome
+
+actor Admin as A
+
+rectangle "Admin Use-Cases" {
+  usecase "Confirm Schedule" as UC_ConfSch
+  usecase "Approval" as UC_Approve
+  usecase "Manage Users" as UC_Manage
+}
+
+A -- UC_ConfSch
+A -- UC_Approve
+
+@enduml
+

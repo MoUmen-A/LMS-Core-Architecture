@@ -1,0 +1,36 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam actorStyle awesome
+
+actor Teacher as T
+
+rectangle "Teacher Use-Cases" {
+  usecase "Create Lesson" as UC_Create
+  usecase "Start Lesson" as UC_Start
+  usecase "Conduct Lesson" as UC_Conduct
+  usecase "Upload PDFs & Videos" as UC_Upload
+  usecase "Upload Recording" as UC_Rec
+  usecase "Set Schedule" as UC_SetSch
+  usecase "Replace/Delete File" as UC_Rep
+  usecase "Validate File" as UC_Valid
+  usecase "Confirm Schedule" as UC_ConfSch
+  usecase "Update Schedule" as UC_UpdtSch
+}
+
+T -- UC_Create
+T -- UC_Start
+T -- UC_Conduct
+T -- UC_Upload
+T -- UC_SetSch
+T -- UC_Rec
+
+UC_Upload ..> UC_Valid : <<include>>
+UC_Upload <.. UC_Rep : <<extend>>
+UC_Conduct <.. UC_Rec : <<extend>>
+UC_SetSch ..> UC_ConfSch : <<include>>
+UC_SetSch <.. UC_UpdtSch : <<extend>>
+
+@enduml
+
